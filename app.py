@@ -52,7 +52,7 @@ if user_input:
                     with st.spinner("Formulating insight..."):
                         chat_completion = client.chat.completions.create(
                             messages=[{"role": "system", "content": "You are a polite wellness assistant. Give concise tips."}, {"role": "user", "content": user_input}],
-                            model="llama-3.1-8b-instant",
+                            model="openai/gpt-oss-20b",
                         )
                         st.chat_message("assistant").write(chat_completion.choices.message.content)
                 else: 
