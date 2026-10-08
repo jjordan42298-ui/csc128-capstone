@@ -24,7 +24,6 @@ if user_input:
         intent = analysis["intent"]
         entities = analysis["entities"]
         
-        # Quick catch to convert generic single words into clear intents to avoid unknown drops
         if intent == "unknown" and "stress" in user_input.lower():
             intent = "suggest_coping_strategy"
             entities["stress_level"] = "high"
@@ -49,12 +48,11 @@ if user_input:
                     if entities["sleep_hours"] < 7: st.error("⚠️ Sleep duration falls below standard thresholds.")
                 st.write(retriever.fetch_grounded_sleep_tips())
             else:
-                # Upgraded robust conversational fallback statement
                 if client:
                     with st.spinner("Formulating insight..."):
                         chat_completion = client.chat.completions.create(
                             messages=[{"role": "system", "content": "You are a polite wellness assistant. Give concise tips."}, {"role": "user", "content": user_input}],
-                            model="llama3-8b-8192",
+                            model="llama-3.1-8b-instant",
                         )
                         st.chat_message("assistant").write(chat_completion.choices.message.content)
                 else: 
