@@ -23,6 +23,12 @@ if user_input:
         analysis = classifier.extract_entities_and_intent(user_input)
         intent = analysis["intent"]
         entities = analysis["entities"]
+        
+        # Quick catch to convert generic single words into clear intents to avoid unknown drops
+        if intent == "unknown" and "stress" in user_input.lower():
+            intent = "suggest_coping_strategy"
+            entities["stress_level"] = "high"
+
         st.write("---")
         st.markdown(f"**Detected Intent Pipeline:** `{intent}`")
         try:
@@ -43,6 +49,7 @@ if user_input:
                     if entities["sleep_hours"] < 7: st.error("⚠️ Sleep duration falls below standard thresholds.")
                 st.write(retriever.fetch_grounded_sleep_tips())
             else:
+                # Upgraded robust conversational fallback statement
                 if client:
                     with st.spinner("Formulating insight..."):
                         chat_completion = client.chat.completions.create(
@@ -50,6 +57,8 @@ if user_input:
                             model="llama3-8b-8192",
                         )
                         st.chat_message("assistant").write(chat_completion.choices.message.content)
-                else: st.error("Please ask about coping strategies, tracking mood, campus resources, or sleep tips.")
+                else: 
+                    st.info("👋 Hello! I am your student wellness assistant. Try asking me directly about **'coping strategies'**, **'tracking your mood'**, **'campus resources'**, or **'sleep tips'** so I can trigger my internal modules!")
         except Exception as runtime_err:
             st.error("⚠️ Operational Notice: Error processing this intent path.")
+            st.caption(f"Diagnostic details: {str(runtime_err)}")
