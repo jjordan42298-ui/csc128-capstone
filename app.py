@@ -54,7 +54,7 @@ if user_input:
                             messages=[{"role": "system", "content": "You are a polite wellness assistant. Give concise tips."}, {"role": "user", "content": user_input}],
                             model="openai/gpt-oss-20b",
                         )
-                        st.chat_message("assistant").write(chat_completion.choices.message.content)
+                        st.chat_message("assistant").write(chat_completion.choices[0].message.content)
                 else: 
                     st.info("👋 Hello! I am your student wellness assistant. Try asking me directly about **'coping strategies'**, **'tracking your mood'**, **'campus resources'**, or **'sleep tips'** so I can trigger my internal modules!")
         except Exception as runtime_err:
